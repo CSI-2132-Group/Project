@@ -1,0 +1,29 @@
+plugins {
+    id "java"
+    id "application"
+    id "com.github.johnrengelman.shadow" version "7.1.2"
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation "org.hibernate:hibernate-core:5.6.5.Final"
+    implementation "mysql:mysql-connector-java:8.0.28"
+    implementation "com.google.code.gson:gson:2.9.0"
+    implementation "com.formdev:flatlaf:2.0.1"
+    implementation "com.formdev:flatlaf-intellij-themes:2.0.1"
+}
+
+application {
+    mainClassName = "csi2132.project.Project"
+}
+
+shadowJar {
+    archiveFileName = "Project.jar"
+}
+
+artifacts {
+    archives shadowJar
+}
