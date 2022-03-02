@@ -66,6 +66,8 @@ public class ServerFrame extends JFrame {
 		//================================================================================================//
 
 		confirm.addActionListener(e -> {
+			confirm.setEnabled(false);
+
 			try {
 				Connection con = DriverManager.getConnection(url.getText().trim(), user.getText().trim(), password.getText().trim());
 				result.setForeground(Color.GREEN);
@@ -73,8 +75,10 @@ public class ServerFrame extends JFrame {
 				con.close();
 			} catch(SQLException ex) {
 				result.setForeground(Color.RED);
-				result.setText(ex.getSQLState() + " : " + ex.getMessage());
+				result.setText(ex.getMessage());
 			}
+
+			confirm.setEnabled(true);
 		});
 
 		frame.setContentPane(panel);
