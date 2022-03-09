@@ -3,6 +3,8 @@ package csi2136.project;
 import com.formdev.flatlaf.intellijthemes.FlatDarkFlatIJTheme;
 import csi2136.project.ui.ServerFrame;
 
+import java.awt.*;
+
 public class Project {
 
     static {
@@ -10,7 +12,7 @@ public class Project {
     }
 
     public static void main(String[] args) {
-        ServerFrame.create();
+        EventQueue.invokeLater(() -> ServerFrame.create());
     }
 
 }
