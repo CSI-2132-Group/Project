@@ -45,7 +45,7 @@ public class DBHandler {
         return inst;
     }
 
-    public Connection getConnection() throws SQLException {
+    private Connection getConnection() throws SQLException {
 
         return DriverManager.getConnection(
             "jdbc:mysql://"+host+":"+port+"/"+name,
@@ -54,7 +54,11 @@ public class DBHandler {
         );
     }
 
-    public ResultSet getQuery(String query) {
-        throw new NotYetImplementedException();
+    public ResultSet getQuery(String query) throws SQLException {
+        Statement stmp = this.getConnection().createStatement();
+
+        stmp.execute(query);
+
+        return stmp.getResultSet();
     }
 }
