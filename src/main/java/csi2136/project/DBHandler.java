@@ -14,11 +14,11 @@ import java.util.Map;
 public class DBHandler {
     private static DBHandler inst;
 
-    private String host;
-    private String port;
-    private String name;
-    private String userName;
-    private String password;
+    private final String host;
+    private final String port;
+    private final String name;
+    private final String userName;
+    private final String password;
 
     private DBHandler(){
         Map<String, String> env = System.getenv();
