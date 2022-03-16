@@ -27,4 +27,4 @@ build/
 .gradle/
 .idea/
 
-src/main/java/csi2136/project/DBConnectionData.java
+*/DBConnectionData.java
