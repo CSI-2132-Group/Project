@@ -21,12 +21,12 @@ public class DBHandler {
     private DBHandler(){
         Map<String, String> env = System.getenv();
 
-        host = env.get("DB_host");
-        port = env.get("DB_port");
-        name = env.get("DB_name");
+        host = DBConnectionData.host;
+        port = DBConnectionData.port;
+        name = DBConnectionData.name;
 
-        userName = env.get("DB_username");
-        password = env.get("DB_password");
+        userName = DBConnectionData.userName;
+        password = DBConnectionData.password;
 
         System.out.println("Host:"+host);
         System.out.println("port:"+port);
