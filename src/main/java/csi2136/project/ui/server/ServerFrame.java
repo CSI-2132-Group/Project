@@ -1,13 +1,30 @@
-package csi2136.project.ui;
+package csi2136.project.ui.server;
+
+import csi2136.project.Server;
+import csi2136.project.ui.BaseFrame;
 
 import javax.swing.*;
-import java.awt.*;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 
-public class ServerFrame extends JFrame {
+public class ServerFrame extends BaseFrame {
 
+	public ServerFrame(Server server) {
+		this.initialize();
+
+		this.panels.add(new MainScreen(this, (url, user, password, port) -> server.createConnection(port)));
+
+		this.setContentPane(this.panels.get(this.panelId));
+	}
+
+	private void initialize() {
+		this.setTitle("Server");
+		this.setSize(960, 540);
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setLocationRelativeTo(null);
+		this.setLayout(null);
+		this.setResizable(false);
+	}
+
+	/*
 	public static JFrame create() {
 		JFrame frame = new JFrame();
 		//Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
@@ -19,8 +36,7 @@ public class ServerFrame extends JFrame {
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
 		int width = 960, height = 540, centerX = width / 2, centerY = height / 2;
-		//================================================================================================//
-		//frame.setContentPane(new RegisterScreen(width, height));
+		frame.setContentPane(new RegisterScreen(width, height));
 
 		JLabel label = new JLabel("MySQL Server");
 		label.setFont(new Font(label.getFont().getName(), Font.PLAIN, 58));
@@ -32,24 +48,24 @@ public class ServerFrame extends JFrame {
 		label.setVerticalAlignment(SwingConstants.CENTER);
 		label.setBounds(0, 0, width, height / 3);
 		frame.add(label);
-		//================================================================================================//
+
 		JTextField url = new JTextField("jdbc:mysql://localhost/");
 		url.setBounds(centerX - 200, height / 3, 400, 40);
 		frame.add(url);
-		//================================================================================================//
+
 		JTextField user = new JTextField("root");
 		user.setBounds(centerX - 200, height / 3 + 60, 190, 40);
 		frame.add(user);
-		//================================================================================================//
+
 		JTextField password = new JTextField("password");
 		password.setBounds(centerX + 10, height / 3 + 60, 190, 40);
 		frame.add(password);
-		//================================================================================================//
+
 		JButton confirm = new JButton("Continue >");
 		confirm.setBounds(width - 130, height - 90, 100, 40);
 		confirm.setMargin(new Insets(0,0,0,0));
 		frame.add(confirm);
-		//================================================================================================//
+
 		JLabel result = new JLabel("");
 		result.setFont(new Font(label.getFont().getName(), Font.PLAIN, 14));
 		result.setBackground(new Color(0, 0, 0, 0));
@@ -59,7 +75,7 @@ public class ServerFrame extends JFrame {
 		result.setVerticalAlignment(SwingConstants.CENTER);
 		result.setBounds(centerX - 400, height / 3 + 120, 800, 40);
 		frame.add(result);
-		//================================================================================================//
+
 		confirm.addActionListener(e -> {
 			try {
 				Connection con = DriverManager.getConnection(url.getText().trim(), user.getText().trim(), password.getText().trim());
@@ -76,6 +92,6 @@ public class ServerFrame extends JFrame {
 		});
 
 		return frame;
-	}
+	}*/
 
 }
