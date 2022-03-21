@@ -10,11 +10,10 @@ public class LoginScreen extends JPanel {
 	public JLabel title;
 	public JTextField username;
 	public JTextField password;
-	public JButton back, confirm;
+	public JButton back,confirm;
 
 	protected Runnable onBack;
 	protected ConfirmAction onConfirm;
-
 	public LoginScreen(JFrame frame, Runnable onBack, ConfirmAction onConfirm) {
 		this.onBack = onBack;
 		this.onConfirm = onConfirm;
