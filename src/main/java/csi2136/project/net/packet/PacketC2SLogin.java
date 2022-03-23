@@ -13,18 +13,18 @@ public class PacketC2SLogin extends Packet implements C2SMessage {
     private String username;
     private String password;
 
-    public PacketC2SLogin (String username, String password){
+    public PacketC2SLogin(String username, String password) {
         this.username = username;
         this.password = password;
     }
 
-    public PacketC2SLogin(){
+    public PacketC2SLogin() {
     }
 
     @Override
     public Packet write(ByteBuffer buf) throws IOException {
-       buf.writeASCII(this.username, ByteOrder.BIG_ENDIAN);
-       buf.writeASCII(this.password, ByteOrder.BIG_ENDIAN);
+        buf.writeASCII(this.username, ByteOrder.BIG_ENDIAN);
+        buf.writeASCII(this.password, ByteOrder.BIG_ENDIAN);
         return this;
     }
 
@@ -38,7 +38,6 @@ public class PacketC2SLogin extends Packet implements C2SMessage {
     @Override
     public Packet onPacketReceived(ServerContext context) {
         //Verification
-        
-        return null;
+        return new PacketS2CLogin(this.username, true);
     }
 }

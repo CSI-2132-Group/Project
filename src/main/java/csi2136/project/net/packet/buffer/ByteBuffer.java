@@ -33,7 +33,7 @@ public class ByteBuffer {
         return this;
     }
 
-    private boolean readBoolean() throws IOException {
+    public boolean readBoolean() throws IOException {
         int v = this.read();
         if (v < 0) throw new EOFException();
         return v != 0;
