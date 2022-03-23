@@ -13,6 +13,10 @@ public class Client {
 	protected ClientFrame frame;
 	protected Listener listener;
 
+	public Listener getListener() {
+		return listener;
+	}
+
 	public Client() {
 		this.frame = new ClientFrame(this);
 	}
