@@ -315,15 +315,15 @@ public class DBHandler {
             //TODO Appointment
             inst.getQuery(
                   "INSERT INTO Appointment VALUES"+
-                        "(DEFAULT, 1, 1, 1, 2022-03-17, 2022-03-17, 1, 3)"
+                        "(DEFAULT, 1, 1, 1, '2022-03-17', '2022-03-17', 1, 3)"
             );
             inst.getQuery(
                     "INSERT INTO Appointment VALUES"+
-                            "(DEFAULT, 1, 2, 2, 2022-03-17, 2022-03-17, 1, 3)"
+                            "(DEFAULT, 1, 2, 2, '2022-03-17', '2022-03-17', 1, 3)"
             );
             inst.getQuery(
                     "INSERT INTO Appointment VALUES"+
-                            "(DEFAULT, 1, 2, 3, 2022-03-17, 2022-03-17, 1, 3)"
+                            "(DEFAULT, 1, 2, 3, '2022-03-17', '2022-03-17', 1, 3)"
             );
 
         }
