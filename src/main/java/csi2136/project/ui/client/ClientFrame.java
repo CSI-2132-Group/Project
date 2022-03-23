@@ -2,6 +2,7 @@ package csi2136.project.ui.client;
 
 import csi2136.project.Client;
 import csi2136.project.net.packet.PacketC2SLogin;
+import csi2136.project.net.packet.PacketC2SRegister;
 import csi2136.project.ui.BaseFrame;
 
 import javax.swing.*;
@@ -31,8 +32,8 @@ public class ClientFrame extends BaseFrame {
 			//Move to the next screen
 		}));
 
-		this.panels.add(new RegisterScreen(this, () -> this.movePanel(-2), (username, password, ssn, type) -> {
-
+		this.panels.add(new RegisterScreen(this, () -> this.movePanel(-2), (username, password, insurance, type) -> {
+			client.getListener().sendPacket(new PacketC2SRegister(username,password,insurance, type));
 		}));
 
 		this.setContentPane(this.panels.get(this.panelId));

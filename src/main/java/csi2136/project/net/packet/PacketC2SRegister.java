@@ -1,5 +1,6 @@
 package csi2136.project.net.packet;
 
+import csi2136.project.AccountType;
 import csi2136.project.DBHandler;
 import csi2136.project.net.context.ServerContext;
 import csi2136.project.net.packet.buffer.ByteBuffer;
@@ -11,23 +12,29 @@ import java.nio.ByteOrder;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class PacketC2SLogin extends Packet implements C2SMessage {
+public class PacketC2SRegister extends Packet implements C2SMessage {
 
     private String username;
     private String password;
+    private String insurance;
+    private AccountType type;
 
-    public PacketC2SLogin(String username, String password) {
+    public PacketC2SRegister(String username, String password, String insurance, AccountType type) {
         this.username = username;
         this.password = password;
+        this.insurance = insurance;
+        this.type = type;
     }
 
-    public PacketC2SLogin() {
+    public PacketC2SRegister() {
     }
 
     @Override
     public Packet write(ByteBuffer buf) throws IOException {
         buf.writeASCII(this.username, ByteOrder.BIG_ENDIAN);
         buf.writeASCII(this.password, ByteOrder.BIG_ENDIAN);
+        buf.writeASCII(this.insurance, ByteOrder.BIG_ENDIAN);
+        buf.writeInt(this.type.ordinal(), ByteOrder.BIG_ENDIAN);
         return this;
     }
 
@@ -35,6 +42,8 @@ public class PacketC2SLogin extends Packet implements C2SMessage {
     public Packet read(ByteBuffer buf) throws IOException {
         this.username = buf.readASCII(ByteOrder.BIG_ENDIAN);
         this.password = buf.readASCII(ByteOrder.BIG_ENDIAN);
+        this.insurance = buf.readASCII(ByteOrder.BIG_ENDIAN);
+        this.type = AccountType.values()[buf.readInt(ByteOrder.BIG_ENDIAN)];
         return this;
     }
 
@@ -42,19 +51,23 @@ public class PacketC2SLogin extends Packet implements C2SMessage {
     public Packet onPacketReceived(ServerContext context) {
         //Verification
         try {
-            ResultSet passwordValues = DBHandler.getInst().getQuery("SELECT Password_Hash, Password_Salt" +
-                                        "FROM user" +
-                                        "WHERE '" + this.username + "' = Username");
+            ResultSet amount = DBHandler.getInst().getQuery("SELECT COUNT(*) FROM user WHERE Username ='" + this.username + "'");
 
-            String tempHash = passwordValues.getString(passwordValues.findColumn("Password_Hash"));
-            String tempSalt = passwordValues.getString(passwordValues.findColumn("Password_Salt"));
+            if(amount.getInt(0) > 0) {
+                //Write data to database
+                String salt = generateSalt();
+                String hashedPass = hash(this.password + salt);
+                DBHandler.getInst().getQuery("INSERT INTO user VALUES" +
+                                "('"+ this.username + "', '" + hashedPass +"' , '"+ salt + "' , '" + this.insurance + "')");
 
-            String tempEnteredPass = this.password + tempSalt;
-            tempEnteredPass = hash(tempEnteredPass);
 
-            if(tempEnteredPass.equals(tempHash)){
+                //upon success re-use S2C login
                 return new PacketS2CLogin(this.username, true);
+
             }
+            //Create new packet
+            //Print Error
+
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -62,6 +75,9 @@ public class PacketC2SLogin extends Packet implements C2SMessage {
         return new PacketS2CLogin(this.username, false);
     }
 
+    public String generateSalt(){
+        return "";
+    }
     public String hash(String value){
 
         return value;

@@ -1,9 +1,6 @@
 package csi2136.project.init;
 
-import csi2136.project.net.packet.PacketC2SHello;
-import csi2136.project.net.packet.PacketC2SLogin;
-import csi2136.project.net.packet.PacketS2CDisconnect;
-import csi2136.project.net.packet.PacketS2CLogin;
+import csi2136.project.net.packet.*;
 import csi2136.project.net.util.PacketRegistry;
 
 public class InitNetwork {
@@ -13,6 +10,7 @@ public class InitNetwork {
         PacketRegistry.registerPacket(PacketS2CDisconnect.class);
         PacketRegistry.registerPacket(PacketC2SLogin.class);
         PacketRegistry.registerPacket(PacketS2CLogin.class);
+        PacketRegistry.registerPacket(PacketC2SRegister.class);
     }
 
 }

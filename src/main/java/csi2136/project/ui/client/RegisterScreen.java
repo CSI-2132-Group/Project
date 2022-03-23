@@ -11,7 +11,7 @@ public class RegisterScreen extends JPanel {
 	public JLabel title;
 	public JTextField username;
 	public JTextField password;
-	public JTextField ssn;
+	public JTextField insurance;
 	public JComboBox<AccountType> type;
 	public JButton back, confirm;
 
@@ -53,10 +53,10 @@ public class RegisterScreen extends JPanel {
 		Utils.setHint(this.password, "password...");
 		this.add(this.password);
 
-		this.ssn = new JTextField();
-		this.ssn.setBounds(width / 2 - 100, height / 3 + 100, 200, 40);
-		Utils.setHint(this.ssn, "ssn (leave blank for none)...");
-		this.add(this.ssn);
+		this.insurance = new JTextField();
+		this.insurance.setBounds(width / 2 - 100, height / 3 + 100, 200, 40);
+		Utils.setHint(this.insurance, "insurance (leave blank for none)...");
+		this.add(this.insurance);
 
 		this.type = new JComboBox<>(AccountType.values());
 		this.type.setBounds(width / 2 - 100, height / 3 + 160, 200, 40);
@@ -73,7 +73,7 @@ public class RegisterScreen extends JPanel {
 		this.confirm.setBounds(width - 130, height - 90, 100, 40);
 
 		this.confirm.addActionListener(e -> this.onConfirm.onConfirm(
-			this.username.getText(), this.password.getText(), this.ssn.getText(),
+			this.username.getText(), this.password.getText(), this.insurance.getText(),
 			(AccountType)this.type.getModel().getSelectedItem()));
 
 		this.add(this.confirm);
@@ -81,7 +81,7 @@ public class RegisterScreen extends JPanel {
 
 	@FunctionalInterface
 	public interface ConfirmAction {
-		void onConfirm(String username, String password, String ssn, AccountType type);
+		void onConfirm(String username, String password, String insurance, AccountType type);
 	}
 	
 }
