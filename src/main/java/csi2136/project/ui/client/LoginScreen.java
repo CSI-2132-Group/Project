@@ -10,6 +10,7 @@ public class LoginScreen extends JPanel {
 	public JLabel title;
 	public JTextField username;
 	public JTextField password;
+	public JLabel error;
 	public JButton back,confirm;
 
 	protected Runnable onBack;
@@ -19,6 +20,7 @@ public class LoginScreen extends JPanel {
 		this.onConfirm = onConfirm;
 		this.addTitle(frame.getWidth(), frame.getHeight());
 		this.addLoginFields(frame.getWidth(), frame.getHeight());
+		this.addErrorText(frame.getWidth(), frame.getHeight());
 		this.addStateButtons(frame.getWidth(), frame.getHeight());
 		this.setLayout(null);
 	}
@@ -46,6 +48,19 @@ public class LoginScreen extends JPanel {
 		this.password.setBounds(width / 2 - 100, height / 3 + 60, 200, 40);
 		Utils.setHint(this.password, "password...");
 		this.add(this.password);
+	}
+
+	private void addErrorText(int width, int height) {
+		this.error = new JLabel("");
+		this.error.setFont(new Font(this.title.getFont().getName(), Font.PLAIN, 20));
+		this.error.setBackground(new Color(0, 0, 0, 0));
+		this.error.setFocusable(false);
+		this.error.setOpaque(true);
+		this.error.setForeground(Color.RED);
+		this.error.setHorizontalAlignment(SwingConstants.CENTER);
+		this.error.setVerticalAlignment(SwingConstants.CENTER);
+		this.error.setBounds(0, height / 3 + 120, width, 60);
+		this.add(this.error);
 	}
 
 	private void addStateButtons(int width, int height) {

@@ -26,19 +26,6 @@ public class MainScreen extends JPanel {
 		this.validateInput();
 	}
 
-	private void addErrorText(int width, int height) {
-		this.error = new JLabel("");
-		this.error.setFont(new Font(this.title.getFont().getName(), Font.PLAIN, 20));
-		this.error.setBackground(new Color(0, 0, 0, 0));
-		this.error.setFocusable(false);
-		this.error.setOpaque(true);
-		this.error.setForeground(Color.RED);
-		this.error.setHorizontalAlignment(SwingConstants.CENTER);
-		this.error.setVerticalAlignment(SwingConstants.CENTER);
-		this.error.setBounds(0, height / 3 + 120, width, 60);
-		this.add(this.error);
-	}
-
 	protected void addTitle(int width, int height) {
 		this.title = new JLabel("Connect to Server");
 		this.title.setFont(new Font(this.title.getFont().getName(), Font.PLAIN, 58));
@@ -66,6 +53,19 @@ public class MainScreen extends JPanel {
 		this.port.setText("8888");
 		this.port.addCaretListener(e -> this.validateInput());
 		this.add(this.port);
+	}
+
+	private void addErrorText(int width, int height) {
+		this.error = new JLabel("");
+		this.error.setFont(new Font(this.title.getFont().getName(), Font.PLAIN, 20));
+		this.error.setBackground(new Color(0, 0, 0, 0));
+		this.error.setFocusable(false);
+		this.error.setOpaque(true);
+		this.error.setForeground(Color.RED);
+		this.error.setHorizontalAlignment(SwingConstants.CENTER);
+		this.error.setVerticalAlignment(SwingConstants.CENTER);
+		this.error.setBounds(0, height / 3 + 120, width, 60);
+		this.add(this.error);
 	}
 
 	protected void addStateButtons(int width, int height) {

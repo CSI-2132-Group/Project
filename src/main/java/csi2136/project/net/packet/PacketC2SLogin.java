@@ -1,10 +1,11 @@
 package csi2136.project.net.packet;
 
-import csi2136.project.DBHandler;
+import csi2136.project.core.Database;
 import csi2136.project.net.context.ServerContext;
 import csi2136.project.net.packet.buffer.ByteBuffer;
 import csi2136.project.net.packet.message.C2SMessage;
 import csi2136.project.net.packet.message.Packet;
+import csi2136.project.ui.Utils;
 
 import java.io.IOException;
 import java.nio.ByteOrder;
@@ -16,12 +17,13 @@ public class PacketC2SLogin extends Packet implements C2SMessage {
     private String username;
     private String password;
 
+    public PacketC2SLogin() {
+
+    }
+
     public PacketC2SLogin(String username, String password) {
         this.username = username;
         this.password = password;
-    }
-
-    public PacketC2SLogin() {
     }
 
     @Override
@@ -40,30 +42,31 @@ public class PacketC2SLogin extends Packet implements C2SMessage {
 
     @Override
     public Packet onPacketReceived(ServerContext context) {
-        //Verification
+        Database db = context.server.getDatabase();
+
         try {
-            ResultSet passwordValues = DBHandler.getInst().getQuery("SELECT Password_Hash, Password_Salt" +
-                                        "FROM user" +
-                                        "WHERE '" + this.username + "' = Username");
+            ResultSet passwordValues = db.send(
+                String.format("SELECT Password_Hash, Password_Salt from User WHERE '%s' = Username;", this.username));
 
-            String tempHash = passwordValues.getString(passwordValues.findColumn("Password_Hash"));
-            String tempSalt = passwordValues.getString(passwordValues.findColumn("Password_Salt"));
-
-            String tempEnteredPass = this.password + tempSalt;
-            tempEnteredPass = hash(tempEnteredPass);
-
-            if(tempEnteredPass.equals(tempHash)){
-                return new PacketS2CLogin(this.username, true);
+            if(!passwordValues.next()) {
+                return new PacketS2CLogin(this.username, false);
             }
 
-        } catch (SQLException e) {
+            String tempHash = passwordValues.getString("Password_Hash");
+            String tempSalt = passwordValues.getString("Password_Salt");
+
+            String tempEnteredPass = this.password + tempSalt;
+            tempEnteredPass = Utils.hash(tempEnteredPass);
+
+            if(tempEnteredPass.equals(tempHash)) {
+                context.listener.sendPacket(new PacketS2CUser(db, this.username));
+                return new PacketS2CLogin(this.username, true);
+            }
+        } catch(SQLException e) {
             e.printStackTrace();
         }
+
         return new PacketS2CLogin(this.username, false);
     }
 
-    public String hash(String value){
-
-        return value;
-    }
 }

@@ -10,8 +10,10 @@ import java.awt.*;
 
 public class ClientFrame extends BaseFrame {
 
+	private final Client client;
 
 	public ClientFrame(Client client) {
+		this.client = client;
 		this.initialize();
 
 		this.panels.add(new MainScreen(this, (screen, address) -> {
@@ -29,14 +31,19 @@ public class ClientFrame extends BaseFrame {
 
 		this.panels.add(new LoginScreen(this, () -> this.movePanel(-1), (username, password) -> {
 			client.getListener().sendPacket(new PacketC2SLogin(username, password));
-			//Move to the next screen
 		}));
 
 		this.panels.add(new RegisterScreen(this, () -> this.movePanel(-2), (username, password, insurance, type) -> {
 			client.getListener().sendPacket(new PacketC2SRegister(username,password,insurance, type));
 		}));
 
-		this.setContentPane(this.panels.get(this.panelId));
+		this.panels.add(new AccountScreen(this));
+
+		this.setPanel(0);
+	}
+
+	public Client getClient() {
+		return this.client;
 	}
 
 	private void initialize() {

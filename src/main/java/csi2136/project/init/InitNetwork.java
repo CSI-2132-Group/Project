@@ -11,6 +11,9 @@ public class InitNetwork {
         PacketRegistry.registerPacket(PacketC2SLogin.class);
         PacketRegistry.registerPacket(PacketS2CLogin.class);
         PacketRegistry.registerPacket(PacketC2SRegister.class);
+        PacketRegistry.registerPacket(PacketS2CRegister.class);
+        PacketRegistry.registerPacket(PacketC2SUser.class);
+        PacketRegistry.registerPacket(PacketS2CUser.class);
     }
 
 }

@@ -34,7 +34,6 @@ public class PacketS2CDisconnect extends Packet implements S2CMessage {
 
     @Override
     public Packet onPacketReceived(ClientContext context) {
-        //TODO: show error message here
         context.listener.disconnect(this.reason);
         return null;
     }

@@ -13,6 +13,7 @@ public class RegisterScreen extends JPanel {
 	public JTextField password;
 	public JTextField insurance;
 	public JComboBox<AccountType> type;
+	public JLabel error;
 	public JButton back, confirm;
 
 	protected Runnable onBack;
@@ -25,6 +26,7 @@ public class RegisterScreen extends JPanel {
 		this.onConfirm = onConfirm;
 		this.addTitle(width, height);
 		this.addRegisterFields(width, height);
+		this.addErrorText(width, height);
 		this.addStateButtons(width, height);
 		this.setLayout(null);
 	}
@@ -63,6 +65,19 @@ public class RegisterScreen extends JPanel {
 		this.add(this.type);
 	}
 
+	private void addErrorText(int width, int height) {
+		this.error = new JLabel("");
+		this.error.setFont(new Font(this.title.getFont().getName(), Font.PLAIN, 20));
+		this.error.setBackground(new Color(0, 0, 0, 0));
+		this.error.setFocusable(false);
+		this.error.setOpaque(true);
+		this.error.setForeground(Color.RED);
+		this.error.setHorizontalAlignment(SwingConstants.CENTER);
+		this.error.setVerticalAlignment(SwingConstants.CENTER);
+		this.error.setBounds(0, height / 3 + 220, width, 60);
+		this.add(this.error);
+	}
+
 	private void addStateButtons(int width, int height) {
 		this.back = new JButton("< Return");
 		this.back.setBounds(15, height - 90, 100, 40);
@@ -73,7 +88,8 @@ public class RegisterScreen extends JPanel {
 		this.confirm.setBounds(width - 130, height - 90, 100, 40);
 
 		this.confirm.addActionListener(e -> this.onConfirm.onConfirm(
-			this.username.getText(), this.password.getText(), this.insurance.getText(),
+			this.username.getText(), this.password.getText(),
+			this.insurance.getText().equals("insurance (leave blank for none)...") ? "" : this.insurance.getText(),
 			(AccountType)this.type.getModel().getSelectedItem()));
 
 		this.add(this.confirm);

@@ -1,11 +1,12 @@
 package csi2136.project.net.packet;
 
 import csi2136.project.AccountType;
-import csi2136.project.DBHandler;
+import csi2136.project.core.Database;
 import csi2136.project.net.context.ServerContext;
 import csi2136.project.net.packet.buffer.ByteBuffer;
 import csi2136.project.net.packet.message.C2SMessage;
 import csi2136.project.net.packet.message.Packet;
+import csi2136.project.ui.Utils;
 
 import java.io.IOException;
 import java.nio.ByteOrder;
@@ -19,14 +20,15 @@ public class PacketC2SRegister extends Packet implements C2SMessage {
     private String insurance;
     private AccountType type;
 
+    public PacketC2SRegister() {
+
+    }
+
     public PacketC2SRegister(String username, String password, String insurance, AccountType type) {
         this.username = username;
         this.password = password;
         this.insurance = insurance;
         this.type = type;
-    }
-
-    public PacketC2SRegister() {
     }
 
     @Override
@@ -49,37 +51,32 @@ public class PacketC2SRegister extends Packet implements C2SMessage {
 
     @Override
     public Packet onPacketReceived(ServerContext context) {
-        //Verification
+        if(this.username.isEmpty()) {
+            return PacketS2CRegister.ofFailure(this.username, "Invalid username");
+        } else if(this.password.isEmpty()) {
+            return PacketS2CRegister.ofFailure(this.password, "Invalid password");
+        }
+
+        Database db = context.server.getDatabase();
+
         try {
-            ResultSet amount = DBHandler.getInst().getQuery("SELECT COUNT(*) FROM user WHERE Username ='" + this.username + "'");
+            ResultSet amount = db.send(String.format("SELECT COUNT(*) FROM user WHERE Username = '%s';", this.username));
+            amount.next();
 
-            if(amount.getInt(0) > 0) {
-                //Write data to database
-                String salt = generateSalt();
-                String hashedPass = hash(this.password + salt);
-                DBHandler.getInst().getQuery("INSERT INTO user VALUES" +
-                                "('"+ this.username + "', '" + hashedPass +"' , '"+ salt + "' , '" + this.insurance + "')");
-
-
-                //upon success re-use S2C login
-                return new PacketS2CLogin(this.username, true);
-
+            if(amount.getInt(1) > 0) {
+                return PacketS2CRegister.ofFailure(this.username, "Username already in use");
             }
-            //Create new packet
-            //Print Error
 
-
+            String salt = Utils.generateSalt();
+            String hashedPass = Utils.hash(this.password + salt);
+            db.send(String.format("INSERT INTO user VALUES('%s', NULL, '%s', '%s', '%s');", this.username, hashedPass, salt, this.insurance));
+            context.listener.sendPacket(new PacketS2CUser(db, this.username));
+            return PacketS2CRegister.ofSuccess(this.username);
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return new PacketS2CLogin(this.username, false);
+
+        return PacketS2CRegister.ofFailure(this.username, "Unexpected error");
     }
 
-    public String generateSalt(){
-        return "";
-    }
-    public String hash(String value){
-
-        return value;
-    }
 }

@@ -12,6 +12,7 @@ public class MainScreen extends JPanel {
 	public JTextField username;
 	public JTextField password;
 	public JTextField port;
+	public JLabel error;
 	public JButton connect;
 
 	protected ConnectAction onConnect;
@@ -20,6 +21,7 @@ public class MainScreen extends JPanel {
 		this.onConnect = onConnect;
 		this.addTitle(frame.getWidth(), frame.getHeight());
 		this.addServerFields(frame.getWidth(), frame.getHeight());
+		this.addErrorText(frame.getWidth(), frame.getHeight());
 		this.addStateButtons(frame.getWidth(), frame.getHeight());
 		this.setLayout(null);
 		this.validateInput();
@@ -61,6 +63,18 @@ public class MainScreen extends JPanel {
 		this.add(this.port);
 	}
 
+	private void addErrorText(int width, int height) {
+		this.error = new JLabel("");
+		this.error.setFont(new Font(this.title.getFont().getName(), Font.PLAIN, 20));
+		this.error.setBackground(new Color(0, 0, 0, 0));
+		this.error.setFocusable(false);
+		this.error.setOpaque(true);
+		this.error.setForeground(Color.RED);
+		this.error.setHorizontalAlignment(SwingConstants.CENTER);
+		this.error.setVerticalAlignment(SwingConstants.CENTER);
+		this.error.setBounds(0, height / 3 + 160, width, 60);
+		this.add(this.error);
+	}
 
 	private void addStateButtons(int width, int height) {
 		this.connect = new JButton("Connect >");

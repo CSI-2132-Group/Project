@@ -2,6 +2,7 @@ package csi2136.project;
 
 import csi2136.project.init.InitNetwork;
 import csi2136.project.init.InitUI;
+import csi2136.project.net.context.ClientContext;
 import csi2136.project.net.listener.Listener;
 import csi2136.project.net.packet.PacketC2SHello;
 import csi2136.project.net.util.NetAddress;
@@ -46,7 +47,12 @@ public class Client {
 				this.frame.getPanel(0, MainScreen.class).error.setText(reason);
 				this.frame.setPanel(0);
 				this.frame.repaint();
-			}).connect(address);
+			}).connect(address)
+			.onContextCreated(context -> {
+				if(context instanceof ClientContext) {
+					((ClientContext)context).client = this;
+				}
+			});
 
 		this.listener.start();
 		return this.isConnected();
