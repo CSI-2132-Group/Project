@@ -13,7 +13,10 @@ public class InitNetwork {
         PacketRegistry.registerPacket(PacketC2SRegister.class);
         PacketRegistry.registerPacket(PacketS2CRegister.class);
         PacketRegistry.registerPacket(PacketC2SUser.class);
-        PacketRegistry.registerPacket(PacketS2CUser.class);
+        PacketRegistry.registerPacket(PacketS2CAccount.class);
+        PacketRegistry.registerPacket(PacketC2SUsers.class);
+        PacketRegistry.registerPacket(PacketC2SEmployees.class);
+        PacketRegistry.registerPacket(PacketC2SAppointments.class);
     }
 
 }

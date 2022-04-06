@@ -5,12 +5,12 @@ import csi2136.project.core.Appointment;
 import javax.swing.*;
 import java.awt.*;
 
-public class AppointmentPanel extends JPanel {
+public class AppointmentScreen extends JPanel {
 
-	private final PatientPanel parent;
+	private final PatientScreen parent;
 	private final Appointment appointment;
 
-	public AppointmentPanel(PatientPanel parent, Appointment appointment, int width) {
+	public AppointmentScreen(PatientScreen parent, Appointment appointment, int width) {
         this.parent = parent;
 		this.appointment = appointment;
 		this.addSummary(width, false);
@@ -20,7 +20,7 @@ public class AppointmentPanel extends JPanel {
 	public void addSummary(int width, boolean showAll) {
 		boolean sizeSet = false;
 
-		JLabel type = this.createLabel(appointment.type, true);
+		JLabel type = this.createLabel(appointment.type + " (" + this.appointment.employee.branch.name + ")", true);
 		type.setBounds(100, 0, width, 130);
 		this.add(type);
 

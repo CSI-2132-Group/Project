@@ -17,27 +17,29 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
-public class PacketS2CUser extends Packet implements S2CMessage {
+public class PacketS2CAccount extends Packet implements S2CMessage {
 
-    protected User user;
+	protected String username;
+	protected List<User> users;
 	protected List<Employee> employees;
 	protected List<String> procedures;
 
-	public PacketS2CUser() {
+	public PacketS2CAccount() {
 
 	}
 
-	public PacketS2CUser(Database db, String username) {
+	public PacketS2CAccount(Database db, String username) {
 	    try {
-		    User user = new User();
-		    ResultSet result = db.send(String.format("SELECT * FROM User WHERE '%s' = Username;", username));
+	    	this.username = username;
 
-	        if(result.next()) {
-                user = new User().read(result, db);
-            }
+		    this.users = new ArrayList<>();
+		    ResultSet result = db.send("SELECT * FROM User;");
 
-		    this.user = user;
+		    while(result.next()) {
+			    this.users.add(new User().read(result, db));
+		    }
 
 		    this.employees = new ArrayList<>();
 		    result = db.send("SELECT * FROM Employee;");
@@ -45,6 +47,8 @@ public class PacketS2CUser extends Packet implements S2CMessage {
 		    while(result.next()) {
 			    this.employees.add(new Employee().read(result, db));
 		    }
+
+
 
 		    this.procedures = new ArrayList<>();
 		    result = db.send("SELECT * FROM Procedures;");
@@ -59,7 +63,12 @@ public class PacketS2CUser extends Packet implements S2CMessage {
 
     @Override
     public Packet write(ByteBuffer buf) throws IOException {
-	    buf.writeObject(this.user);
+		buf.writeASCII(this.username, ByteOrder.BIG_ENDIAN);
+	    buf.writeInt(this.users.size(), ByteOrder.BIG_ENDIAN);
+
+	    for(User user : this.users) {
+		    buf.writeObject(user);
+	    }
 
 	    buf.writeInt(this.employees.size(), ByteOrder.BIG_ENDIAN);
 
@@ -78,14 +87,20 @@ public class PacketS2CUser extends Packet implements S2CMessage {
 
     @Override
     public Packet read(ByteBuffer buf) throws IOException {
-		this.user = buf.readObject(new User());
+		this.username = buf.readASCII(ByteOrder.BIG_ENDIAN);
 
 		try {
 			int size = buf.readInt(ByteOrder.BIG_ENDIAN);
+			this.users = new ArrayList<>();
+
+			for(int i = 0; i < size; i++) {
+				this.users.add(buf.readObject(new User()));
+			}
+
+			size = buf.readInt(ByteOrder.BIG_ENDIAN);
 			this.employees = new ArrayList<>();
 
 			for(int i = 0; i < size; i++) {
-				System.out.println(i);
 				this.employees.add(buf.readObject(new Employee()));
 			}
 
@@ -106,9 +121,19 @@ public class PacketS2CUser extends Packet implements S2CMessage {
     public Packet onPacketReceived(ClientContext context) {
         ClientFrame frame = context.client.getFrame();
         AccountScreen screen = frame.getPanel(AccountScreen.class);
-	    screen.user = this.user;
-	    screen.employees = employees;
-	    screen.procedures = procedures;
+
+        screen.user = this.users.stream().filter(user -> user.username.equals(this.username))
+	        .findAny().orElse(null);
+
+        screen.users = this.users;
+	    screen.employees = this.employees;
+
+	    screen.appointments = this.users.stream()
+		    .flatMap(u -> u.patients.stream())
+		    .flatMap(p -> p.appointments.stream())
+		    .collect(Collectors.toList());
+
+	    screen.procedures = this.procedures;
 	    screen.updateTabs();
         return null;
     }

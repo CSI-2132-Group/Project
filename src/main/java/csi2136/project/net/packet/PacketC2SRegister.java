@@ -70,7 +70,7 @@ public class PacketC2SRegister extends Packet implements C2SMessage {
             String salt = Utils.generateSalt();
             String hashedPass = Utils.hash(this.password + salt);
             db.send(String.format("INSERT INTO user VALUES('%s', NULL, '%s', '%s', '%s');", this.username, hashedPass, salt, this.insurance));
-            context.listener.sendPacket(new PacketS2CUser(db, this.username));
+            context.listener.sendPacket(new PacketS2CAccount(db, this.username));
             return PacketS2CRegister.ofSuccess(this.username);
         } catch (SQLException e) {
             e.printStackTrace();

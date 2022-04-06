@@ -59,7 +59,7 @@ public class PacketC2SLogin extends Packet implements C2SMessage {
             tempEnteredPass = Utils.hash(tempEnteredPass);
 
             if(tempEnteredPass.equals(tempHash)) {
-                context.listener.sendPacket(new PacketS2CUser(db, this.username));
+                context.listener.sendPacket(new PacketS2CAccount(db, this.username));
                 return new PacketS2CLogin(this.username, true);
             }
         } catch(SQLException e) {

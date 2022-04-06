@@ -2,6 +2,7 @@ package csi2136.project.ui.client.account;
 
 import csi2136.project.core.*;
 import csi2136.project.ui.Utils;
+import csi2136.project.ui.client.AccountScreen;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,20 +10,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class PatientPanel extends JPanel {
+public class PatientScreen extends JPanel {
 
 	protected final JFrame frame;
+	private final AccountScreen screen;
 	protected final Patient patient;
-	private final List<Employee> employees;
-	private final List<String> procedures;
 	protected final Runnable onEdit;
 	protected final Runnable onDelete;
 
-	public PatientPanel(JFrame frame, Patient patient, List<Employee> employees, List<String> procedures, boolean edit, Runnable onEdit, Runnable onDelete) {
+	public PatientScreen(JFrame frame, AccountScreen screen, Patient patient, boolean edit, Runnable onEdit, Runnable onDelete) {
 		this.frame = frame;
+		this.screen = screen;
 		this.patient = patient;
-		this.employees = employees;
-		this.procedures = procedures;
 		this.onEdit = onEdit;
 		this.onDelete = onDelete;
 		this.setLayout(null);
@@ -41,7 +40,7 @@ public class PatientPanel extends JPanel {
 		boolean dark = false;
 
 		for(Appointment appointment : this.patient.appointments) {
-			AppointmentPanel panel = new AppointmentPanel(this, appointment, width);
+			AppointmentScreen panel = new AppointmentScreen(this, appointment, width);
 			panel.setBounds(0, y, width, (int)panel.getPreferredSize().getHeight());
 			y += panel.getPreferredSize().getHeight();
 
@@ -69,15 +68,34 @@ public class PatientPanel extends JPanel {
 
 		add.addActionListener(e -> {
 			JDialog dialog = new JDialog(this.frame, "Create Appointment");
-			dialog.setLayout(new GridLayout(7, 1));
+			dialog.setLayout(new GridLayout(8, 1));
 
-			JComboBox<String> emp = new JComboBox<>(this.employees.stream().map(Employee::getFullName).toArray(String[]::new));
+			JComboBox<String> branch = new JComboBox<>(this.screen.employees.stream()
+				.map(m -> m.branch).distinct()
+				.map(b -> b.name).toArray(String[]::new));
+			branch.setSelectedIndex(0);
+			dialog.add(branch);
+
+			JComboBox<String> emp = new JComboBox<>(this.screen.employees.stream()
+				.filter(employee -> employee.branch.name.equals(branch.getSelectedItem()))
+				.map(Employee::getFullName).toArray(String[]::new));
 			emp.setSelectedIndex(0);
+			dialog.add(emp);
+
+			branch.addItemListener(e1 -> {
+				emp.removeAllItems();
+
+				this.screen.employees.stream()
+					.filter(employee -> employee.branch.name.equals(branch.getSelectedItem()))
+					.map(Employee::getFullName).forEach(emp::addItem);
+
+				emp.setSelectedIndex(0);
+			});
 
 			JTextField date = this.createField("", "Date...");
 			JTextField startTime = this.createField("", "Start Time...");
 			JTextField endTime = this.createField("", "End Time...");
-			JComboBox<String> procedure = new JComboBox<>(this.procedures.toArray(new String[0]));
+			JComboBox<String> procedure = new JComboBox<>(this.screen.procedures.toArray(new String[0]));
 
 			JButton book = new JButton("Book");
 			book.setFont(new Font(add.getFont().getName(), Font.PLAIN, 18));
@@ -86,7 +104,7 @@ public class PatientPanel extends JPanel {
 			close.setFont(new Font(add.getFont().getName(), Font.PLAIN, 18));
 
 			book.addActionListener(a -> {
-				Employee target = this.employees.stream()
+				Employee target = this.screen.employees.stream()
 					.filter(employee -> employee.getFullName().equals(emp.getSelectedItem()))
 					.findFirst().orElse(null);
 				if(target == null)return;
@@ -125,13 +143,13 @@ public class PatientPanel extends JPanel {
 	}
 
 	public void updateAppointments() {
-		List<AppointmentPanel> panels = new ArrayList<>();
+		List<AppointmentScreen> panels = new ArrayList<>();
 
 		for(int i = this.getComponents().length - 1; i >= 0; i--) {
 			Component c = this.getComponent(i);
 
-			if(c instanceof AppointmentPanel) {
-				panels.add((AppointmentPanel)c);
+			if(c instanceof AppointmentScreen) {
+				panels.add((AppointmentScreen)c);
 				this.remove(i);
 			} else if(c instanceof JButton) {
 				if(((JButton)c).getText().equals("New...")) {
@@ -144,7 +162,7 @@ public class PatientPanel extends JPanel {
 		int y = 200 + 180, width = (int)this.getPreferredSize().getWidth();
 		boolean dark = false;
 
-		for(AppointmentPanel panel : panels) {
+		for(AppointmentScreen panel : panels) {
 			panel.setBounds(0, y, width, (int)panel.getPreferredSize().getHeight());
 			y += panel.getPreferredSize().getHeight();
 
@@ -166,7 +184,7 @@ public class PatientPanel extends JPanel {
 	}
 
 	public void addAppointment(Appointment appointment) {
-		AppointmentPanel panel = new AppointmentPanel(this, appointment, (int)this.getPreferredSize().getWidth());
+		AppointmentScreen panel = new AppointmentScreen(this, appointment, (int)this.getPreferredSize().getWidth());
 		this.add(panel, 0);
 		this.updateAppointments();
 	}

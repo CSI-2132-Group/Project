@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.nio.ByteOrder;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Objects;
 
 public class Employee implements IByteSerializable<Employee>, ISQLSerializable<Employee> {
 
@@ -169,6 +170,19 @@ public class Employee implements IByteSerializable<Employee>, ISQLSerializable<E
 			this.province = Province.fromFormat(result.getString("Province"));
 			this.name = result.getString("Name");
 			return this;
+		}
+
+		@Override
+		public boolean equals(Object o) {
+			if(this == o) return true;
+			if(!(o instanceof Branch)) return false;
+			Branch branch = (Branch)o;
+			return id == branch.id;
+		}
+
+		@Override
+		public int hashCode() {
+			return Objects.hash(this.id);
 		}
 	}
 

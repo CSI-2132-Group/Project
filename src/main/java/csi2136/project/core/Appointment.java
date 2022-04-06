@@ -128,7 +128,7 @@ public class Appointment implements IByteSerializable<Appointment>, ISQLSerializ
 	}
 
 	public static class Treatment implements IByteSerializable<Treatment>, ISQLSerializable<Treatment> {
-		public int id;
+		public int id = -1;
 		public String type = "Filling";
 		public String tooth = "Canine";
 		public String medication = "Morphine";
@@ -161,8 +161,8 @@ public class Appointment implements IByteSerializable<Appointment>, ISQLSerializ
 		public Treatment write(Database db) throws SQLException {
 			db.send(String.format("DELETE FROM Treatment WHERE %d = Treatment_ID;", this.id));
 
-			db.send(String.format("REPLACE INTO Treatment VALUES(%d, '%s', '%s', '%s', '%s', %d);",
-				this.id, this.type, this.tooth, this.medication, this.comments, this.procedure.id));
+			db.send(String.format("REPLACE INTO Treatment VALUES(%s, '%s', '%s', '%s', '%s', %d);",
+				this.id == -1 ? "DEFAULT" : this.id, this.type, this.tooth, this.medication, this.comments, this.procedure.id));
 			return this;
 		}
 
