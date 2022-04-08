@@ -206,9 +206,45 @@ public class PatientScreen extends JPanel {
 		ssn.setBounds(50, 50 + 3 * (height / 7 + 10), width / 2 - 120, height / 7);
 		this.add(ssn);
 
-		JTextField birthDate = this.createField(this.patient.birthDate, "Date of Birth...");
-		birthDate.setBounds(50, 50 + 4 * (height / 7 + 10), width / 2 - 120, height / 7);
-		this.add(birthDate);
+		//JTextField birthDate = this.createField(this.patient.birthDate, "Date of Birth...");
+		//birthDate.setBounds(50, 50 + 4 * (height / 7 + 10), width / 2 - 120, height / 7);
+		//this.add(birthDate);
+
+		String[] tmp;
+
+
+		if(this.patient.birthDate == null)
+		{
+			tmp = new String[3];
+
+			tmp[0] = "0000";
+			tmp[1] = "00";
+			tmp[2] = "00";
+		}
+		else
+		{
+			tmp = this.patient.birthDate.split("-");
+
+			if (tmp == null || tmp.length != 3) {
+				tmp = new String[3];
+
+				tmp[0] = "0000";
+				tmp[1] = "00";
+				tmp[2] = "00";
+			}
+		}
+
+		JTextField year = this.createField(tmp[0], "YYYY");
+		year.setBounds(50, 50 + 4 * (height / 7 + 10), (width / 2 - 120) / 8 * 4, height / 7);
+		this.add(year);
+
+		JTextField day = this.createField(tmp[1], "DD");
+		day.setBounds(50 + (width / 2 - 120) / 8 * 4, 50 + 4 * (height / 7 + 10), (width / 2 - 120) / 8 * 2, height / 7);
+		this.add(day);
+
+		JTextField month = this.createField(tmp[2], "MM");
+		month.setBounds(50 + (width / 2 - 120) / 8 * 6, 50 + 4 * (height / 7 + 10), (width / 2 - 120) / 8 * 2, height / 7);
+		this.add(month);
 
 		JComboBox<Gender> gender = this.createComboBox(Gender.values(), this.patient.gender);
 		gender.setBounds(50, 50 + 5 * (height / 7 + 10), width / 2 - 120, height / 7);
@@ -293,7 +329,20 @@ public class PatientScreen extends JPanel {
 			if(firstName.getText().equals("First Name...")) { firstName.setForeground(Color.RED); valid = false; }
 			if(middleName.getText().equals("Middle Name...")) { middleName.setForeground(Color.RED); valid = false; }
 			if(lastName.getText().equals("Last Name...")) { lastName.setForeground(Color.RED); valid = false; }
-			if(birthDate.getText().equals("Date of Birth...")) { birthDate.setForeground(Color.RED); valid = false; }
+
+			if(!isNumber(year.getText(), 1000,10000)) {
+				year.setBackground(Color.RED);
+				valid = false;
+			}
+			if(!isNumber(day.getText(), 1,32)) {
+				day.setBackground(Color.RED);
+				valid = false;
+			}
+			if(!isNumber(month.getText(), 1,13)) {
+				month.setBackground(Color.RED);
+				valid = false;
+			}
+
 			if(houseNumber.getText().equals("0")) { houseNumber.setForeground(Color.RED); valid = false; }
 			if(street.getText().equals("Street...")) { street.setForeground(Color.RED); valid = false; }
 			if(city.getText().equals("City...")) { city.setForeground(Color.RED); valid = false; }
@@ -309,7 +358,7 @@ public class PatientScreen extends JPanel {
 				this.patient.middleName = middleName.getText();
 				this.patient.lastName = lastName.getText();
 				this.patient.ssn = ssn.getText();
-				this.patient.birthDate = birthDate.getText();
+				this.patient.birthDate = year.getText()+"-"+month.getText()+"-"+day.getText();
 				this.patient.gender = (Gender)gender.getSelectedItem();
 				this.patient.houseNumber = Integer.parseInt(houseNumber.getText());
 				this.patient.street = street.getText();
@@ -321,7 +370,11 @@ public class PatientScreen extends JPanel {
 				this.remove(middleName);
 				this.remove(lastName);
 				this.remove(ssn);
-				this.remove(birthDate);
+
+				this.remove(year);
+				this.remove(month);
+				this.remove(day);
+
 				this.remove(gender);
 				this.remove(houseNumber);
 				this.remove(street);
@@ -521,6 +574,22 @@ public class PatientScreen extends JPanel {
 		JComboBox<E> comboBox = new JComboBox<>(values);
 		comboBox.setSelectedItem(value);
 		return comboBox;
+	}
+
+	/**
+	 * isNumber checks if a str is a number between a explicit range
+	 * @param str string that will be checked
+	 * @param min min number
+	 * @param max max number
+	 * @return boolean whether the str is a number and within an explicit range
+	 */
+	private boolean isNumber(String str, int min, int max) {
+		try {
+			int i = Integer.parseInt(str);
+			return min <= i && i < max;
+		} catch(NumberFormatException e){
+			return false;
+		}
 	}
 
 }
