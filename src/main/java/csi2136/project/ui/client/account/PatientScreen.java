@@ -358,7 +358,7 @@ public class PatientScreen extends JPanel {
 				this.patient.middleName = middleName.getText();
 				this.patient.lastName = lastName.getText();
 				this.patient.ssn = ssn.getText();
-				this.patient.birthDate = year.getText()+"-"+month.getText()+"-"+day.getText();
+				this.patient.birthDate = year.getText()+"-"+day.getText()+"-"+month.getText();
 				this.patient.gender = (Gender)gender.getSelectedItem();
 				this.patient.houseNumber = Integer.parseInt(houseNumber.getText());
 				this.patient.street = street.getText();
@@ -372,8 +372,8 @@ public class PatientScreen extends JPanel {
 				this.remove(ssn);
 
 				this.remove(year);
-				this.remove(month);
 				this.remove(day);
+				this.remove(month);
 
 				this.remove(gender);
 				this.remove(houseNumber);
