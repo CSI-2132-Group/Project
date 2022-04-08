@@ -210,41 +210,10 @@ public class PatientScreen extends JPanel {
 		//birthDate.setBounds(50, 50 + 4 * (height / 7 + 10), width / 2 - 120, height / 7);
 		//this.add(birthDate);
 
-		String[] tmp;
+		JTextField[] birthDateTmp =  createDate(this.patient.birthDate, (width / 2 - 120), height / 7, 50, 50 + 4 * (height / 7 + 10));
 
-
-		if(this.patient.birthDate == null)
-		{
-			tmp = new String[3];
-
-			tmp[0] = "0000";
-			tmp[1] = "00";
-			tmp[2] = "00";
-		}
-		else
-		{
-			tmp = this.patient.birthDate.split("-");
-
-			if (tmp == null || tmp.length != 3) {
-				tmp = new String[3];
-
-				tmp[0] = "0000";
-				tmp[1] = "00";
-				tmp[2] = "00";
-			}
-		}
-
-		JTextField year = this.createField(tmp[0], "YYYY");
-		year.setBounds(50, 50 + 4 * (height / 7 + 10), (width / 2 - 120) / 8 * 4, height / 7);
-		this.add(year);
-
-		JTextField day = this.createField(tmp[1], "DD");
-		day.setBounds(50 + (width / 2 - 120) / 8 * 4, 50 + 4 * (height / 7 + 10), (width / 2 - 120) / 8 * 2, height / 7);
-		this.add(day);
-
-		JTextField month = this.createField(tmp[2], "MM");
-		month.setBounds(50 + (width / 2 - 120) / 8 * 6, 50 + 4 * (height / 7 + 10), (width / 2 - 120) / 8 * 2, height / 7);
-		this.add(month);
+		//50 + 4 * (height / 7 + 10) : y
+		//(width / 2 - 120) : x
 
 		JComboBox<Gender> gender = this.createComboBox(Gender.values(), this.patient.gender);
 		gender.setBounds(50, 50 + 5 * (height / 7 + 10), width / 2 - 120, height / 7);
@@ -330,18 +299,10 @@ public class PatientScreen extends JPanel {
 			if(middleName.getText().equals("Middle Name...")) { middleName.setForeground(Color.RED); valid = false; }
 			if(lastName.getText().equals("Last Name...")) { lastName.setForeground(Color.RED); valid = false; }
 
-			if(!isNumber(year.getText(), 1000,10000)) {
-				year.setBackground(Color.RED);
+			if(!validateDate(birthDateTmp[0],birthDateTmp[1], birthDateTmp[2])) {
 				valid = false;
 			}
-			if(!isNumber(day.getText(), 1,32)) {
-				day.setBackground(Color.RED);
-				valid = false;
-			}
-			if(!isNumber(month.getText(), 1,13)) {
-				month.setBackground(Color.RED);
-				valid = false;
-			}
+
 
 			if(houseNumber.getText().equals("0")) { houseNumber.setForeground(Color.RED); valid = false; }
 			if(street.getText().equals("Street...")) { street.setForeground(Color.RED); valid = false; }
@@ -358,7 +319,7 @@ public class PatientScreen extends JPanel {
 				this.patient.middleName = middleName.getText();
 				this.patient.lastName = lastName.getText();
 				this.patient.ssn = ssn.getText();
-				this.patient.birthDate = year.getText()+"-"+day.getText()+"-"+month.getText();
+				this.patient.birthDate = birthDateTmp[0].getText()+"-"+birthDateTmp[1].getText()+"-"+birthDateTmp[2].getText();
 				this.patient.gender = (Gender)gender.getSelectedItem();
 				this.patient.houseNumber = Integer.parseInt(houseNumber.getText());
 				this.patient.street = street.getText();
@@ -371,9 +332,9 @@ public class PatientScreen extends JPanel {
 				this.remove(lastName);
 				this.remove(ssn);
 
-				this.remove(year);
-				this.remove(day);
-				this.remove(month);
+				for(int i1 = 0; i1 < 3; i1++) {
+					this.remove(birthDateTmp[i1]);
+				}
 
 				this.remove(gender);
 				this.remove(houseNumber);
@@ -574,6 +535,57 @@ public class PatientScreen extends JPanel {
 		JComboBox<E> comboBox = new JComboBox<>(values);
 		comboBox.setSelectedItem(value);
 		return comboBox;
+	}
+
+	private JTextField[] createDate(String date, int width, int height, int x, int y) {
+		String[] tmp = new String[] {"", "", ""};
+
+		if(date != null)
+		{
+			tmp = date.split("-");
+			if (tmp == null || tmp.length != 3) {
+				tmp = new String[3];
+
+				tmp[0] = "";
+				tmp[1] = "";
+				tmp[2] = "";
+			}
+		}
+		//50 + 4 * (height / 7 + 10) : y
+		//(width / 2 - 120) : x
+
+		JTextField year = this.createField(tmp[0], "YYYY");
+		year.setBounds(x, y, width / 8 * 4, height);
+		this.add(year);
+
+		JTextField month = this.createField(tmp[2], "MM");
+		month.setBounds(x + width / 8 * 4, y, width / 8 * 2, height);
+		this.add(month);
+
+		JTextField day = this.createField(tmp[1], "DD");
+		day.setBounds(x + width / 8 * 6, y, width / 8 * 2, height);
+		this.add(day);
+
+		return new JTextField[] {year, month, day};
+	}
+
+	private boolean validateDate(JTextField year, JTextField month, JTextField day) {
+		if(!isNumber(year.getText(), 1000,10000)) {
+			year.setBackground(Color.RED);
+			return false;
+		}
+
+		if(!isNumber(month.getText(), 1,13)) {
+			month.setBackground(Color.RED);
+			return false;
+		}
+
+		if(!isNumber(day.getText(), 1,32)) {
+			day.setBackground(Color.RED);
+			return false;
+		}
+
+		return true;
 	}
 
 	/**
