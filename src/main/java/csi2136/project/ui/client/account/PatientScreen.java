@@ -210,7 +210,7 @@ public class PatientScreen extends JPanel {
 		//birthDate.setBounds(50, 50 + 4 * (height / 7 + 10), width / 2 - 120, height / 7);
 		//this.add(birthDate);
 
-		JTextField[] birthDateTmp =  createDate(this.patient.birthDate, (width / 2 - 120), height / 7, 50, 50 + 4 * (height / 7 + 10));
+		JTextField[] birthDateTmp =  createDate("Date of Birth", this.patient.birthDate, (width / 2 - 120), height / 7, 50, 50 + 4 * (height / 7 + 10));
 
 		//50 + 4 * (height / 7 + 10) : y
 		//(width / 2 - 120) : x
@@ -537,7 +537,17 @@ public class PatientScreen extends JPanel {
 		return comboBox;
 	}
 
-	private JTextField[] createDate(String date, int width, int height, int x, int y) {
+	/**
+	 * createDate creates JTextFeild to create a date
+	 * @param labelText
+	 * @param date
+	 * @param width
+	 * @param height
+	 * @param x
+	 * @param y
+	 * @return array of JTextFeild of date feild (YYYY, MM, DD)
+	 */
+	private JTextField[] createDate(String labelText, String date, int width, int height, int x, int y) {
 		String[] tmp = new String[] {"", "", ""};
 
 		if(date != null)
@@ -551,38 +561,61 @@ public class PatientScreen extends JPanel {
 				tmp[2] = "";
 			}
 		}
-		//50 + 4 * (height / 7 + 10) : y
-		//(width / 2 - 120) : x
+
+		int start = x;
+
+		JLabel label = new JLabel(labelText);
+		label.setBounds(start, y, width / 2, height);
+		this.add(label);
+		start+=width/2;
 
 		JTextField year = this.createField(tmp[0], "YYYY");
-		year.setBounds(x, y, width / 8 * 4, height);
+		year.setBounds(start, y, width / 4, height);
 		this.add(year);
+		start+=width / 4;
 
-		JTextField month = this.createField(tmp[2], "MM");
-		month.setBounds(x + width / 8 * 4, y, width / 8 * 2, height);
+		JTextField month = this.createField(tmp[1], "MM");
+		month.setBounds(start, y, width / 8, height);
 		this.add(month);
+		start+=width / 8;
 
-		JTextField day = this.createField(tmp[1], "DD");
-		day.setBounds(x + width / 8 * 6, y, width / 8 * 2, height);
+		JTextField day = this.createField(tmp[2], "DD");
+		day.setBounds(start, y, width / 8, height);
 		this.add(day);
 
 		return new JTextField[] {year, month, day};
 	}
 
+	/**
+	 * validateDate method checks if a pair of JTextFeilds contains valid date
+	 * @param year
+	 * @param month
+	 * @param day
+	 * @return boolean whether text feilds are a valid date
+	 */
 	private boolean validateDate(JTextField year, JTextField month, JTextField day) {
 		if(!isNumber(year.getText(), 1000,10000)) {
 			year.setBackground(Color.RED);
 			return false;
+		}
+		else{
+			year.setBackground(new Color(0, 0, 0, 0));
 		}
 
 		if(!isNumber(month.getText(), 1,13)) {
 			month.setBackground(Color.RED);
 			return false;
 		}
+		else{
+			month.setBackground(new Color(0, 0, 0, 0));
+		}
 
 		if(!isNumber(day.getText(), 1,32)) {
 			day.setBackground(Color.RED);
 			return false;
+		}
+		else{
+			day.setBackground(new Color(0, 0, 0, 0));
 		}
 
 		return true;
