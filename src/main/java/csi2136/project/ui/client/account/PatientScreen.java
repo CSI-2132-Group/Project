@@ -206,14 +206,19 @@ public class PatientScreen extends JPanel {
 		ssn.setBounds(50, 50 + 3 * (height / 7 + 10), width / 2 - 120, height / 7);
 		this.add(ssn);
 
-		//JTextField birthDate = this.createField(this.patient.birthDate, "Date of Birth...");
-		//birthDate.setBounds(50, 50 + 4 * (height / 7 + 10), width / 2 - 120, height / 7);
-		//this.add(birthDate);
-
-		JTextField[] birthDateTmp =  createDate("Date of Birth", this.patient.birthDate, (width / 2 - 120), height / 7, 50, 50 + 4 * (height / 7 + 10));
-
-		//50 + 4 * (height / 7 + 10) : y
-		//(width / 2 - 120) : x
+		Object[] tmp =  createDate(
+				"Date of Birth",
+				this.patient.birthDate,
+				width / 2 - 120,
+				height / 7,
+				50,
+				50 + 4 * (height / 7 + 10)
+		);
+		JLabel birthDateLabel = (JLabel) tmp[0];
+		JTextField[] birthDateTmp = new JTextField[3];
+		for(int i1 = 1; i1 < tmp.length; i1++) {
+			birthDateTmp[i1-1] = (JTextField) tmp[i1];
+		}
 
 		JComboBox<Gender> gender = this.createComboBox(Gender.values(), this.patient.gender);
 		gender.setBounds(50, 50 + 5 * (height / 7 + 10), width / 2 - 120, height / 7);
@@ -332,6 +337,7 @@ public class PatientScreen extends JPanel {
 				this.remove(lastName);
 				this.remove(ssn);
 
+				this.remove(birthDateLabel);
 				for(int i1 = 0; i1 < 3; i1++) {
 					this.remove(birthDateTmp[i1]);
 				}
@@ -547,7 +553,7 @@ public class PatientScreen extends JPanel {
 	 * @param y
 	 * @return array of JTextFeild of date feild (YYYY, MM, DD)
 	 */
-	private JTextField[] createDate(String labelText, String date, int width, int height, int x, int y) {
+	private Object[] createDate(String labelText, String date, int width, int height, int x, int y) {
 		String[] tmp = new String[] {"", "", ""};
 
 		if(date != null)
@@ -583,7 +589,7 @@ public class PatientScreen extends JPanel {
 		day.setBounds(start, y, width / 8, height);
 		this.add(day);
 
-		return new JTextField[] {year, month, day};
+		return new Object[] {label ,year, month, day};
 	}
 
 	/**
