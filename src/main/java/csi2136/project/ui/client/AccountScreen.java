@@ -129,7 +129,8 @@ public class AccountScreen extends JTabbedPane {
 
 	public void addTab(Patient patient, boolean edit) {
 		this.setSelectedIndex(-1);
-		this.insertTab(patient.getFullName(), null, new PTab(this, this.frame, patient, edit), null, this.getTabCount() - 1);
+		int i = this.getTabCount() - 1;
+		this.insertTab(patient.getFullName(), null, new PTab(this, this.frame, patient, edit, i), null, i);
 		this.setSelectedIndex(this.getTabCount() - 2);
 	}
 
@@ -149,15 +150,16 @@ public class AccountScreen extends JTabbedPane {
 		public final JPanel panel;
 		public final Patient patient;
 
-		public PTab(AccountScreen parent, ClientFrame frame, Patient patient, boolean edit) {
+		public PTab(AccountScreen parent, ClientFrame frame, Patient patient, boolean edit, int i) {
 			super(null, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 			this.panel = new PatientScreen(frame, parent, patient, edit,
 				() -> {
 					frame.getClient().getListener().sendPacket(new PacketC2SUser(parent.user));
-				},
-				() -> {
+				}, () -> {
 					parent.removeTab(patient);
 					parent.user.patients.remove(patient);
+				}, s -> {
+					parent.setTitleAt(i, s);
 				});
 
 			this.patient = patient;

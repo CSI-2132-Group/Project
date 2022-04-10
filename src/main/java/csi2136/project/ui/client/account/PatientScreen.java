@@ -9,6 +9,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class PatientScreen extends JPanel {
 
@@ -17,13 +18,15 @@ public class PatientScreen extends JPanel {
 	protected final Patient patient;
 	protected final Runnable onEdit;
 	protected final Runnable onDelete;
+	private final Consumer<String> onTitleEdit;
 
-	public PatientScreen(JFrame frame, AccountScreen screen, Patient patient, boolean edit, Runnable onEdit, Runnable onDelete) {
+	public PatientScreen(JFrame frame, AccountScreen screen, Patient patient, boolean edit, Runnable onEdit, Runnable onDelete, Consumer<String> onTitleEdit) {
 		this.frame = frame;
 		this.screen = screen;
 		this.patient = patient;
 		this.onEdit = onEdit;
 		this.onDelete = onDelete;
+		this.onTitleEdit = onTitleEdit;
 		this.setLayout(null);
 
 		if(edit) {
@@ -332,6 +335,7 @@ public class PatientScreen extends JPanel {
 				this.patient.province = (Province)province.getSelectedItem();
 				this.patient.email = email.getText();
 				this.patient.phoneNumber = phoneNumber.getText();
+				this.onTitleEdit.accept(this.patient.getFullName());
 				this.remove(firstName);
 				this.remove(middleName);
 				this.remove(lastName);

@@ -185,6 +185,7 @@ public class Database {
 					"End_time TIME," +
 					"Status INT," +
 					"Appointment_type VARCHAR(16)," +
+					"Review VARCHAR(256)," +
 
 					"PRIMARY KEY(Appointment_ID)," +
 					"Foreign KEY(Patient_ID) REFERENCES Patient(Patient_ID)," +
@@ -348,15 +349,15 @@ public class Database {
 			//TODO Appointment
 			db.send(
 				"INSERT INTO Appointment VALUES"+
-					"(DEFAULT, 1, 1, 1, '2022-05-01', '13:30:00', '14:30:00', 1, 'Check Up')"
+					"(DEFAULT, 1, 1, 1, '2022-05-01', '13:30:00', '14:30:00', 1, 'Check Up', 'Outstanding Moves!')"
 			);
 			db.send(
 				"INSERT INTO Appointment VALUES"+
-					"(DEFAULT, 1, 2, 2, '2022-05-02', '13:30:00', '14:30:00', 1, 'Check Up')"
+					"(DEFAULT, 1, 2, 2, '2022-05-02', '13:30:00', '14:30:00', 1, 'Check Up', 'Outstanding Moves!!')"
 			);
 			db.send(
 				"INSERT INTO Appointment VALUES"+
-					"(DEFAULT, 1, 2, 3, '2022-05-03', '13:30:00', '14:30:00', 1, 'Check Up')"
+					"(DEFAULT, 1, 2, 3, '2022-05-03', '13:30:00', '14:30:00', 1, 'Check Up', 'Outstanding Moves!!!')"
 			);
 
 		} catch(Exception e) {

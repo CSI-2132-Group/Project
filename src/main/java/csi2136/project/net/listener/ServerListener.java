@@ -92,6 +92,10 @@ public class ServerListener extends Thread {
         this.listeners.values().forEach(l -> l.sendPacket(packet));
     }
 
+    public void sendPacketToAllExcept(Packet packet, Listener target) {
+        this.listeners.values().stream().filter(listener -> listener != target).forEach(l -> l.sendPacket(packet));
+    }
+
     @Override
     public void run() {
         this.listen();

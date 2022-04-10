@@ -53,6 +53,8 @@ public class PacketC2SEmployees extends Packet implements C2SMessage {
 			for(Employee employee : this.employees) {
 				employee.write(context.server.getDatabase());
 			}
+
+			context.serverListener.sendPacketToAllExcept(new PacketS2CAccount(context.server.getDatabase(), null), context.listener);
 		} catch(SQLException e) {
 			e.printStackTrace();
 		}

@@ -23,6 +23,7 @@ public class Appointment implements IByteSerializable<Appointment>, ISQLSerializ
 	public Status status;
 	public String type;
 	public Invoice invoice;
+	public String review;
 
 	public Appointment(Patient patient) {
 		this.patient = patient;
@@ -47,6 +48,8 @@ public class Appointment implements IByteSerializable<Appointment>, ISQLSerializ
 		buf.writeASCII(this.type, ByteOrder.BIG_ENDIAN);
 		buf.writeBoolean(this.invoice != null);
 		if(this.invoice != null) buf.writeObject(this.invoice);
+		buf.writeBoolean(this.review != null);
+		if(this.review != null) buf.writeASCII(this.review, ByteOrder.BIG_ENDIAN);
 		return this;
 	}
 
@@ -61,6 +64,7 @@ public class Appointment implements IByteSerializable<Appointment>, ISQLSerializ
 		this.status = Status.values()[buf.readInt(ByteOrder.BIG_ENDIAN)];
 		this.type = buf.readASCII(ByteOrder.BIG_ENDIAN);
 		if(buf.readBoolean()) this.invoice = buf.readObject(new Invoice(this));
+		if(buf.readBoolean()) this.review = buf.readASCII(ByteOrder.BIG_ENDIAN);
 		return this;
 	}
 
@@ -70,10 +74,18 @@ public class Appointment implements IByteSerializable<Appointment>, ISQLSerializ
 			db.send(String.format("DELETE FROM Appointment WHERE %d = Appointment_ID;", this.id));
 		}
 
-		db.send(String.format("REPLACE INTO Appointment VALUES(%s, %d, %d, %s, '%s', '%s', '%s', %d, '%s');",
+		if(this.treatment != null) {
+			this.treatment.write(db);
+		}
+
+		if(this.invoice != null) {
+			this.invoice.write(db);
+		}
+
+		db.send(String.format("REPLACE INTO Appointment VALUES(%s, %d, %d, %s, '%s', '%s', '%s', %d, '%s', %s);",
 			this.id == -1 ? "DEFAULT" : this.id, this.patient.id, this.employee.id,
 			this.treatment == null ? "NULL" : this.treatment.id, this.date,
-			this.startTime, this.endTime, this.status.ordinal(), this.type));
+			this.startTime, this.endTime, this.status.ordinal(), this.type, this.review == null ? "NULL" : "'" + this.review + "'"));
 		return this;
 	}
 
@@ -108,6 +120,7 @@ public class Appointment implements IByteSerializable<Appointment>, ISQLSerializ
 			this.invoice = new Invoice(this).read(ir, db);
 		}
 
+		this.review = result.getString("Review");
 		return this;
 	}
 
@@ -129,10 +142,10 @@ public class Appointment implements IByteSerializable<Appointment>, ISQLSerializ
 
 	public static class Treatment implements IByteSerializable<Treatment>, ISQLSerializable<Treatment> {
 		public int id = -1;
-		public String type = "Filling";
-		public String tooth = "Canine";
-		public String medication = "Morphine";
-		public String comments = "Well things happened.";
+		public String type;
+		public String tooth;
+		public String medication;
+		public String comments;
 		public Procedure procedure = new Procedure();
 
 		@Override

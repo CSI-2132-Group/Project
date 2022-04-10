@@ -117,6 +117,17 @@ public class AppointmentScreen extends JPanel {
 					penalty2.setHorizontalAlignment(SwingConstants.RIGHT);
 					this.add(penalty1);
 					this.add(penalty2);
+
+					JLabel review1 = this.createLabel("Review:", false);
+					review1.setBounds(width / 2 + 40, 105 + 5 * 38, width / 2 - 120, 28);
+					this.add(review1);
+
+					JTextArea review2 = new JTextArea(this.appointment.review == null ? "" : this.appointment.review);
+					review2.setBounds(width / 2 + 40, 105 + 6 * 38, width / 2 - 120, 28 * 4 - 10);
+					review2.setEditable(true);
+					review2.setLineWrap(true);
+					review2.setFont(new Font(review2.getFont().getName(), Font.BOLD, 14));
+					this.add(review2);
 				}
 
 				moreOrLess.setBounds(50, 105 + 6 * 38 + 32 * 4, (width / 2 - 120) / 2, 38);

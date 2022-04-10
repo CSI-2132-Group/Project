@@ -37,6 +37,7 @@ public class PacketC2SUser extends Packet implements C2SMessage {
 	public Packet onPacketReceived(ServerContext context) {
 		try {
 			this.user.write(context.server.getDatabase());
+			context.serverListener.sendPacketToAllExcept(new PacketS2CAccount(context.server.getDatabase(), null), context.listener);
 		} catch(SQLException e) {
 			e.printStackTrace();
 		}

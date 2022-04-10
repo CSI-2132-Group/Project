@@ -63,7 +63,9 @@ public class PacketS2CAccount extends Packet implements S2CMessage {
 
     @Override
     public Packet write(ByteBuffer buf) throws IOException {
-		buf.writeASCII(this.username, ByteOrder.BIG_ENDIAN);
+		buf.writeBoolean(this.username != null);
+		if(this.username != null) buf.writeASCII(this.username, ByteOrder.BIG_ENDIAN);
+
 	    buf.writeInt(this.users.size(), ByteOrder.BIG_ENDIAN);
 
 	    for(User user : this.users) {
@@ -87,7 +89,7 @@ public class PacketS2CAccount extends Packet implements S2CMessage {
 
     @Override
     public Packet read(ByteBuffer buf) throws IOException {
-		this.username = buf.readASCII(ByteOrder.BIG_ENDIAN);
+		if(buf.readBoolean()) this.username = buf.readASCII(ByteOrder.BIG_ENDIAN);
 
 		try {
 			int size = buf.readInt(ByteOrder.BIG_ENDIAN);
@@ -121,8 +123,10 @@ public class PacketS2CAccount extends Packet implements S2CMessage {
     public Packet onPacketReceived(ClientContext context) {
         ClientFrame frame = context.client.getFrame();
         AccountScreen screen = frame.getPanel(AccountScreen.class);
+		if(screen.user == null && this.username == null) return null;
 
-        screen.user = this.users.stream().filter(user -> user.username.equals(this.username))
+        screen.user = this.users.stream()
+	        .filter(user -> user.username.equalsIgnoreCase(this.username == null ? screen.user.username : this.username))
 	        .findAny().orElse(null);
 
         screen.users = this.users;
