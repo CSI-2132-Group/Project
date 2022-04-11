@@ -20,15 +20,17 @@ public class PacketC2SAppointments extends Packet implements C2SMessage {
     protected List<Appointment> appointments;
     protected List<String> usernames;
 	protected List<Integer> patientIds;
+	protected List<Integer> removed;
 
 	public PacketC2SAppointments() {
 
 	}
 
-	public PacketC2SAppointments(List<Appointment> appointments) {
+	public PacketC2SAppointments(List<Appointment> appointments, List<Integer> removed) {
 	    this.appointments = appointments;
 	    this.usernames = this.appointments.stream().map(a -> a.patient.user.username).collect(Collectors.toList());
 	    this.patientIds = this.appointments.stream().map(a -> a.patient.id).collect(Collectors.toList());
+	    this.removed = removed;
 	}
 
     @Override
@@ -41,6 +43,12 @@ public class PacketC2SAppointments extends Packet implements C2SMessage {
 		    buf.writeObject(this.appointments.get(i));
 	    }
 
+	    buf.writeInt(this.removed.size(), ByteOrder.BIG_ENDIAN);
+
+	    for(Integer id : this.removed) {
+		    buf.writeInt(id, ByteOrder.BIG_ENDIAN);
+	    }
+
         return this;
     }
 
@@ -50,6 +58,7 @@ public class PacketC2SAppointments extends Packet implements C2SMessage {
 		this.appointments = new ArrayList<>();
 		this.usernames = new ArrayList<>();
 		this.patientIds = new ArrayList<>();
+		this.removed = new ArrayList<>();
 
 	    for(int i = 0; i < size; i++) {
 	    	Patient patient = new Patient(null);
@@ -61,6 +70,12 @@ public class PacketC2SAppointments extends Packet implements C2SMessage {
 		    this.appointments.add(buf.readObject(new Appointment(patient)));
 	    }
 
+	    size = buf.readInt(ByteOrder.BIG_ENDIAN);
+
+	    for(int i = 0; i < size; i++) {
+	    	this.removed.add(buf.readInt(ByteOrder.BIG_ENDIAN));
+	    }
+
         return this;
     }
 
@@ -69,6 +84,10 @@ public class PacketC2SAppointments extends Packet implements C2SMessage {
 		try {
 			for(Appointment appointment : this.appointments) {
 				appointment.write(context.server.getDatabase());
+			}
+
+			for(Integer id : this.removed) {
+				context.server.getDatabase().send(String.format("DELETE FROM Appointment WHERE %d = Appointment_ID;", id));
 			}
 
 			context.serverListener.sendPacketToAllExcept(new PacketS2CAccount(context.server.getDatabase(), null), context.listener);

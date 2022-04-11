@@ -18,6 +18,7 @@ import javax.swing.*;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class AccountScreen extends JTabbedPane {
@@ -86,21 +87,30 @@ public class AccountScreen extends JTabbedPane {
 
 			if(this.newUsers != null) {
 				UserPanel panel = new UserPanel(this,
-					() -> this.frame.getClient().getListener().sendPacket(new PacketC2SUsers(this.users)));
+					id -> {
+						List<String> removed = id == null ? new ArrayList<>() : Collections.singletonList(id);
+						this.frame.getClient().getListener().sendPacket(new PacketC2SUsers(this.users, removed));
+					});
 				panel.updatePanel(this.frame.getWidth());
 				this.addTab("Users", new ETab(panel));
 			}
 
 			if(this.newEmployees != null) {
 				EmployeePanel panel = new EmployeePanel(this,
-					() -> this.frame.getClient().getListener().sendPacket(new PacketC2SEmployees(this.employees)));
+					id -> {
+						List<Integer> removed = id == null ? new ArrayList<>() : Collections.singletonList(id);
+						this.frame.getClient().getListener().sendPacket(new PacketC2SEmployees(this.employees, removed));
+					});
 				panel.updatePanel(this.frame.getWidth());
 				this.addTab("Employees", new ETab(panel));
 			}
 
 			if(this.newAppointments != null) {
 				AppointmentPanel panel = new AppointmentPanel(this,
-					() -> this.frame.getClient().getListener().sendPacket(new PacketC2SAppointments(this.appointments)));
+					id -> {
+						List<Integer> removed = id == null ? new ArrayList<>() : Collections.singletonList(id);
+						this.frame.getClient().getListener().sendPacket(new PacketC2SAppointments(this.appointments, removed));
+					});
 				panel.updatePanel(this.frame.getWidth());
 				this.addTab("Appointments", new ETab(panel));
 			}

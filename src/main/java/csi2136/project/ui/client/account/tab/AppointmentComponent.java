@@ -208,13 +208,17 @@ public class AppointmentComponent {
 				this.panel.remove(delete);
 				this.panel.remove(background);
 				this.panel.remove(status);
-				this.onEdit.run();
 				this.setStatic(width, height, y);
+				this.onEdit.run();
 				this.panel.repaint();
 			}
 		});
 
-		delete.addActionListener(e -> this.onDelete.run());
+		delete.addActionListener(e -> {
+
+			this.onDelete.run();
+		});
+
 		return 550;
 	}
 

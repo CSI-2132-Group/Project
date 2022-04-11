@@ -5,13 +5,14 @@ import csi2136.project.ui.client.AccountScreen;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.function.Consumer;
 
 public class AppointmentPanel extends JPanel {
 
 	private AccountScreen screen;
-	private Runnable onEdit;
+	private Consumer<Integer> onEdit;
 
-	public AppointmentPanel(AccountScreen screen, Runnable onEdit) {
+	public AppointmentPanel(AccountScreen screen, Consumer<Integer> onEdit) {
 		this.screen = screen;
 		this.onEdit = onEdit;
 		this.setLayout(null);
@@ -28,12 +29,9 @@ public class AppointmentPanel extends JPanel {
 			AppointmentComponent c = new AppointmentComponent(this, appointment, () -> {
 				this.screen.appointments.removeIf(e -> e.id == appointment.id);
 				this.screen.newAppointments.removeIf(e -> e.id == appointment.id);
-				this.onEdit.run();
+				this.onEdit.accept(null);
 				this.updatePanel(width);
-			}, () -> {
-				this.updatePanel(width);
-				this.onEdit.run();
-			}, dark = !dark);
+			}, () -> this.onEdit.accept(appointment.id), dark = !dark);
 
 			if(appointment.invoice == null || appointment.treatment == null) {
 				y += c.setEditable(width, 200, y);
@@ -42,7 +40,10 @@ public class AppointmentPanel extends JPanel {
 			}
 		}
 
-		this.setPreferredSize(new Dimension(width, y));
+		if(!this.getPreferredSize().equals(new Dimension(width, y)))  {
+			this.setPreferredSize(new Dimension(width, y));
+		}
+
 		this.repaint();
 	}
 

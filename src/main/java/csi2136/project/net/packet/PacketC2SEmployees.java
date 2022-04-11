@@ -15,13 +15,15 @@ import java.util.List;
 public class PacketC2SEmployees extends Packet implements C2SMessage {
 
     protected List<Employee> employees;
+	protected List<Integer> removed;
 
 	public PacketC2SEmployees() {
 
 	}
 
-	public PacketC2SEmployees(List<Employee> employees) {
+	public PacketC2SEmployees(List<Employee> employees, List<Integer> removed) {
 	    this.employees = employees;
+		this.removed = removed;
 	}
 
     @Override
@@ -32,6 +34,12 @@ public class PacketC2SEmployees extends Packet implements C2SMessage {
 		    buf.writeObject(employee);
 	    }
 
+	    buf.writeInt(this.removed.size(), ByteOrder.BIG_ENDIAN);
+
+	    for(Integer id : this.removed) {
+		    buf.writeInt(id, ByteOrder.BIG_ENDIAN);
+	    }
+
         return this;
     }
 
@@ -39,9 +47,16 @@ public class PacketC2SEmployees extends Packet implements C2SMessage {
     public Packet read(ByteBuffer buf) throws IOException {
 		int size = buf.readInt(ByteOrder.BIG_ENDIAN);
 		this.employees = new ArrayList<>();
+	    this.removed = new ArrayList<>();
 
 	    for(int i = 0; i < size; i++) {
 		    this.employees.add(buf.readObject(new Employee()));
+	    }
+
+	    size = buf.readInt(ByteOrder.BIG_ENDIAN);
+
+	    for(int i = 0; i < size; i++) {
+		    this.removed.add(buf.readInt(ByteOrder.BIG_ENDIAN));
 	    }
 
         return this;
@@ -50,6 +65,10 @@ public class PacketC2SEmployees extends Packet implements C2SMessage {
 	@Override
 	public Packet onPacketReceived(ServerContext context) {
 		try {
+			for(Integer id : this.removed) {
+				context.server.getDatabase().send(String.format("DELETE FROM Employee WHERE %d = Employee_ID;", id));
+			}
+
 			for(Employee employee : this.employees) {
 				employee.write(context.server.getDatabase());
 			}

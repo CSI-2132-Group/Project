@@ -121,6 +121,19 @@ public class PatientScreen extends JPanel {
 				appointment.status = Appointment.Status.SCHEDULED;
 				appointment.type = (String)procedure.getSelectedItem();
 				this.patient.appointments.add(appointment);
+
+				for(int i = this.getComponents().length - 1; i >= 0; i--) {
+					Component c = this.getComponent(i);
+
+					if(c instanceof AppointmentScreen) {
+						this.remove(i);
+					} else if(c instanceof JButton) {
+						if(((JButton)c).getText().equals("New...")) {
+							this.remove(i);
+						}
+					}
+				}
+
 				this.addAppointments(width);
 				this.onEdit.run();
 				dialog.dispose();

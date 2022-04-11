@@ -159,6 +159,7 @@ public class Database {
 					"PRIMARY KEY(Procedure_ID)" +
 					")");
 
+			/*
 			db.send(
 				"CREATE TABLE Treatment" +
 					"(" +
@@ -171,6 +172,18 @@ public class Database {
 
 					"PRIMARY KEY(Treatment_ID)," +
 					"FOREIGN KEY(Procedure_Num) REFERENCES Procedures(Procedure_ID)"+
+					")");*/
+
+			db.send(
+				"CREATE TABLE Treatment" +
+					"(" +
+					"Treatment_ID INT AUTO_INCREMENT," +
+					"Type VARCHAR(16), " +
+					"Tooth VARCHAR(16)," +
+					"Medication VARCHAR(32)," +
+					"Comments VARCHAR(256)," +
+
+					"PRIMARY KEY(Treatment_ID)" +
 					")");
 
 			db.send(
@@ -321,15 +334,15 @@ public class Database {
 			//TODO Treatments
 			db.send(
 				"INSERT INTO treatment VALUES" +
-					"(DEFAULT, 'Filling', 'Canine', 'Morphine', 'Right Canine has cavity and requires filling', 2)"
+					"(DEFAULT, 'Filling', 'Canine', 'Morphine', 'Right Canine has cavity and requires filling')"
 			);
 			db.send(
 				"INSERT INTO treatment VALUES" +
-					"(DEFAULT, 'Cleaning', 'Mouth', 'N/A', 'Standard Teeth Cleaning Appointment', 1)"
+					"(DEFAULT, 'Cleaning', 'Mouth', 'N/A', 'Standard Teeth Cleaning Appointment')"
 			);
 			db.send(
 				"INSERT INTO treatment VALUES" +
-					"(DEFAULT, 'Cleaning', 'Mouth', 'N/A', 'Standard Teeth Cleaning Appointment', 1)"
+					"(DEFAULT, 'Cleaning', 'Mouth', 'N/A', 'Standard Teeth Cleaning Appointment')"
 			);
 
 			//TODO Treatment_dbructions

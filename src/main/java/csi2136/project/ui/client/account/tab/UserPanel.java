@@ -5,13 +5,14 @@ import csi2136.project.ui.client.AccountScreen;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.function.Consumer;
 
 public class UserPanel extends JPanel {
 
 	private AccountScreen screen;
-	private Runnable onEdit;
+	private Consumer<String> onEdit;
 
-	public UserPanel(AccountScreen screen, Runnable onEdit) {
+	public UserPanel(AccountScreen screen, Consumer<String> onEdit) {
 		this.screen = screen;
 		this.onEdit = onEdit;
 		this.setLayout(null);
@@ -28,9 +29,9 @@ public class UserPanel extends JPanel {
 			UserComponent c = new UserComponent(this, user, this.screen.employees, () -> {
 				this.screen.users.removeIf(e -> e.username.equals(user.username));
 				this.screen.newUsers.removeIf(e -> e.username.equals(user.username));
-				this.onEdit.run();
+				this.onEdit.accept(null);
 				this.updatePanel(width);
-			}, this.onEdit, dark = !dark);
+			}, () -> this.onEdit.accept(user.username), dark = !dark);
 			y += c.setStatic(width, 200, y);
 		}
 

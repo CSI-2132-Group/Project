@@ -146,7 +146,7 @@ public class Appointment implements IByteSerializable<Appointment>, ISQLSerializ
 		public String tooth;
 		public String medication;
 		public String comments;
-		public Procedure procedure = new Procedure();
+		//public Procedure procedure = new Procedure();
 
 		@Override
 		public Treatment write(ByteBuffer buf) throws IOException {
@@ -155,7 +155,7 @@ public class Appointment implements IByteSerializable<Appointment>, ISQLSerializ
 			buf.writeASCII(this.tooth, ByteOrder.BIG_ENDIAN);
 			buf.writeASCII(this.medication, ByteOrder.BIG_ENDIAN);
 			buf.writeASCII(this.comments, ByteOrder.BIG_ENDIAN);
-			buf.writeObject(this.procedure);
+			//buf.writeObject(this.procedure);
 			return this;
 		}
 
@@ -166,7 +166,7 @@ public class Appointment implements IByteSerializable<Appointment>, ISQLSerializ
 			this.tooth = buf.readASCII(ByteOrder.BIG_ENDIAN);
 			this.medication = buf.readASCII(ByteOrder.BIG_ENDIAN);
 			this.comments = buf.readASCII(ByteOrder.BIG_ENDIAN);
-			this.procedure = buf.readObject(new Procedure());
+			//this.procedure = buf.readObject(new Procedure());
 			return this;
 		}
 
@@ -174,8 +174,11 @@ public class Appointment implements IByteSerializable<Appointment>, ISQLSerializ
 		public Treatment write(Database db) throws SQLException {
 			db.send(String.format("DELETE FROM Treatment WHERE %d = Treatment_ID;", this.id));
 
-			db.send(String.format("REPLACE INTO Treatment VALUES(%s, '%s', '%s', '%s', '%s', %d);",
-				this.id == -1 ? "DEFAULT" : this.id, this.type, this.tooth, this.medication, this.comments, this.procedure.id));
+			//db.send(String.format("REPLACE INTO Treatment VALUES(%s, '%s', '%s', '%s', '%s', %d);",
+			//	this.id == -1 ? "DEFAULT" : this.id, this.type, this.tooth, this.medication, this.comments, this.procedure.id));
+
+			db.send(String.format("REPLACE INTO Treatment VALUES(%s, '%s', '%s', '%s', '%s');",
+				this.id == -1 ? "DEFAULT" : this.id, this.type, this.tooth, this.medication, this.comments));
 			return this;
 		}
 
@@ -187,12 +190,13 @@ public class Appointment implements IByteSerializable<Appointment>, ISQLSerializ
 			this.medication = result.getString("Medication");
 			this.comments = result.getString("Comments");
 
+			/*
 			int procedureId = result.getInt("Procedure_Num");
 			ResultSet ps = db.send(String.format("SELECT * FROM Procedures WHERE %s = Procedure_ID;", procedureId));
 
 			if(ps.next()) {
 				this.procedure = new Procedure().read(ps, db);
-			}
+			}*/
 
 			return this;
 		}
