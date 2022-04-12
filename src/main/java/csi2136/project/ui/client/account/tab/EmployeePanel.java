@@ -29,9 +29,9 @@ public class EmployeePanel extends JPanel {
 			EmployeeComponent c = new EmployeeComponent(this, employee, () -> {
 				this.screen.employees.removeIf(e -> e.id == employee.id);
 				this.screen.newEmployees.removeIf(e -> e.id == employee.id);
-				this.onEdit.accept(null);
+				this.onEdit.accept(employee.id);
 				this.updatePanel(width);
-			}, () -> this.onEdit.accept(employee.id), dark = !dark);
+			}, () -> this.onEdit.accept(null), dark = !dark);
 
 			y += c.setStatic(width, 200, y);
 		}

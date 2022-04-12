@@ -29,9 +29,9 @@ public class AppointmentPanel extends JPanel {
 			AppointmentComponent c = new AppointmentComponent(this, appointment, () -> {
 				this.screen.appointments.removeIf(e -> e.id == appointment.id);
 				this.screen.newAppointments.removeIf(e -> e.id == appointment.id);
-				this.onEdit.accept(null);
+				this.onEdit.accept(appointment.id);
 				this.updatePanel(width);
-			}, () -> this.onEdit.accept(appointment.id), dark = !dark);
+			}, () -> this.onEdit.accept(null), dark = !dark);
 
 			if(appointment.invoice == null || appointment.treatment == null) {
 				y += c.setEditable(width, 200, y);

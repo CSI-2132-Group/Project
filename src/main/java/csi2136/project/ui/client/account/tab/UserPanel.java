@@ -29,9 +29,9 @@ public class UserPanel extends JPanel {
 			UserComponent c = new UserComponent(this, user, this.screen.employees, () -> {
 				this.screen.users.removeIf(e -> e.username.equals(user.username));
 				this.screen.newUsers.removeIf(e -> e.username.equals(user.username));
-				this.onEdit.accept(null);
+				this.onEdit.accept(user.username);
 				this.updatePanel(width);
-			}, () -> this.onEdit.accept(user.username), dark = !dark);
+			}, () -> this.onEdit.accept(null), dark = !dark);
 			y += c.setStatic(width, 200, y);
 		}
 
