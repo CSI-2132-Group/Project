@@ -1,6 +1,7 @@
 package csi2136.project.ui.client.account;
 
 import csi2136.project.core.Appointment;
+import csi2136.project.core.Database;
 
 import javax.swing.*;
 import java.awt.*;
@@ -31,7 +32,10 @@ public class AppointmentScreen extends JPanel {
 
 		if(this.appointment.status == Appointment.Status.COMPLETED) {
 			JButton moreOrLess = new JButton(showAll ? "Less" : "More");
+			JButton saveReview = new JButton("Save Review");
+
 			moreOrLess.setFont(new Font(moreOrLess.getFont().getName(), Font.PLAIN, 18));
+			saveReview.setFont(new Font(moreOrLess.getFont().getName(), Font.PLAIN, 18));
 			this.add(moreOrLess);
 
 			if(showAll) {
@@ -128,6 +132,9 @@ public class AppointmentScreen extends JPanel {
 					review2.setLineWrap(true);
 					review2.setFont(new Font(review2.getFont().getName(), Font.BOLD, 14));
 					this.add(review2);
+
+					saveReview.setBounds(width / 2 + 40, 105 + 6 * 38 + 32 * 4, (width / 2 - 120) / 2, 38);
+					this.add(saveReview);
 				}
 
 				moreOrLess.setBounds(50, 105 + 6 * 38 + 32 * 4, (width / 2 - 120) / 2, 38);
