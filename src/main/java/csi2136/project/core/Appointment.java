@@ -177,6 +177,12 @@ public class Appointment implements IByteSerializable<Appointment>, ISQLSerializ
 			//db.send(String.format("REPLACE INTO Treatment VALUES(%s, '%s', '%s', '%s', '%s', %d);",
 			//	this.id == -1 ? "DEFAULT" : this.id, this.type, this.tooth, this.medication, this.comments, this.procedure.id));
 
+			if(this.id == -1) {
+				ResultSet tmp = db.send("SHOW TABLE STATUS LIKE 'treatment';");
+
+				this.id = tmp.findColumn("Auto_increment");
+			}
+
 			db.send(String.format("REPLACE INTO Treatment VALUES(%s, '%s', '%s', '%s', '%s');",
 				this.id == -1 ? "DEFAULT" : this.id, this.type, this.tooth, this.medication, this.comments));
 			return this;
